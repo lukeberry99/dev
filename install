@@ -3,7 +3,6 @@
 set -euo pipefail
 
 trap 'echo "[$BASH_SOURCE:$LINENO] Error: exit code $?: Command: $BASH_COMMAND"' ERR
-trap 'echo "[$BASH_SOURCE:$LINENO] Exit called"' EXIT
 trap 'echo "[$BASH_SOURCE:$LINENO] Interrupt received"' INT TERM
 
 readonly SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" &> /dev/null && pwd)"

@@ -3,11 +3,10 @@
 set -euo pipefail
 
 trap 'echo "[$BASH_SOURCE:$LINENO] Error: exit code $?: Command: $BASH_COMMAND"' ERR
-trap 'echo "[$BASH_SOURCE:$LINENO] Exit called"' EXIT
 trap 'echo "[$BASH_SOURCE:$LINENO] Interrupt received"' INT TERM
 
 readonly SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" &> /dev/null && pwd)"
-readonly VERBOSE=${VERBOSE:-0}
+VERBOSE=${VERBOSE:-0}
 readonly XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
 
 # Colors
@@ -49,15 +48,15 @@ log() {
         "ERROR")
             echo -e "${RED}[ERROR]${NC} ${timestamp} - $message" >&2
             ;;
+            "INFO")
+                echo -e "${GREEN}[INFO]${NC} ${timestamp} - $message"
+                ;;
+            "WARN")
+                echo -e "${YELLOW}[WARN]${NC} ${timestamp} - $message"
+                ;;
         *)
             if [[ ${VERBOSE} -eq 1 ]]; then
                 case "$level" in
-                    "INFO")
-                        echo -e "${GREEN}[INFO]${NC} ${timestamp} - $message"
-                        ;;
-                    "WARN")
-                        echo -e "${YELLOW}[WARN]${NC} ${timestamp} - $message"
-                        ;;
                     "DEBUG")
                         echo -e "${BLUE}[DEBUG]${NC} ${timestamp} - $message"
                         ;;
@@ -107,7 +106,7 @@ copy_file() {
         log "DEBUG" "Removing: $target"
         rm -f "$target"
         
-        log "DEBUG" "Copying: $source to $target"
+        log "INFO" "Copying: $source to $target"
         cp "$source" "$target"
     fi
 }
@@ -118,7 +117,7 @@ main() {
 ╔════════════════════════════════════════════╗
 ║         Config Files Deployment            ║
 ║         ----------------------             ║
-║    🚀 Setting up your environment         ║
+║    🚀 Setting up your environment          ║
 ╚════════════════════════════════════════════╝
 EOF
     echo -e "${NC}"
@@ -148,7 +147,7 @@ EOF
         shift
     done
 
-    log "INFO" "Using XDG_CONFIG_HOME: $XDG_CONFIG_HOME"
+    log "DEBUG" "Using XDG_CONFIG_HOME: $XDG_CONFIG_HOME"
 
     # Update configuration directories
     update_files "$SCRIPT_DIR/env/.config" "$XDG_CONFIG_HOME"
