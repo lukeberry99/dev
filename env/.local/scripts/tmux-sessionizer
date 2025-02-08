@@ -24,7 +24,7 @@ if [[ $# -eq 1 ]]; then
 else
     # If someone wants to make this extensible, i'll accept
     # PR
-    selected=$(find ~/repos ~/repos/github.com ~/repos/github.com/lukeberry99/dev/env/.config -mindepth 1  -maxdepth 2 -type d | fzf)
+    selected=$(find ~/repos ~/repos/github.com ~/repos/bitbucket.org ~/repos/bitbucket.office.jagex.com ~/repos/github.com/lukeberry99/dev/env/.config -mindepth 1  -maxdepth 2 -type d | fzf)
 fi
 
 if [[ -z $selected ]]; then
