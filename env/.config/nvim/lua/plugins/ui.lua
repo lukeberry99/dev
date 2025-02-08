@@ -1,12 +1,4 @@
 return {
-	-- {
-	-- 	"folke/tokyonight.nvim",
-	-- 	lazy = false,
-	-- 	priority = 1000,
-	-- 	config = function()
-	-- 		vim.cmd([[colorscheme tokyonight]])
-	-- 	end,
-	-- },
 	{
 		"ficcdaf/ashen.nvim",
 		lazy = false,
@@ -18,11 +10,7 @@ return {
 	{
 		"folke/which-key.nvim",
 		event = "VeryLazy",
-		opts = {
-			-- your configuration comes here
-			-- or leave it empty to use the default settings
-			-- refer to the configuration section below
-		},
+		opts = {},
 		keys = {
 			{
 				"<leader>?",
@@ -39,21 +27,55 @@ return {
 		lazy = false,
 		---@type snacks.Config
 		opts = {
+			picker = {
+				enabled = true,
+			},
 			bigfile = { enabled = true },
-			dashboard = { enabled = true },
-			indent = { enabled = true },
+			explorer = {
+				enabled = true,
+				replace_netrw = true,
+			},
+			dashboard = {
+				enabled = true,
+				preset = {
+					header = [[
+ @@@@@@@   @@@@@@   @@@@@@@   @@@@@@@@  
+@@@@@@@@  @@@@@@@@  @@@@@@@@  @@@@@@@@  
+!@@       @@!  @@@  @@!  @@@  @@!       
+!@!       !@!  @!@  !@!  @!@  !@!       
+!@!       @!@  !@!  @!@  !@!  @!!!:!    
+!!!       !@!  !!!  !@!  !!!  !!!!!:    
+:!!       !!:  !!!  !!:  !!!  !!:       
+:!:       :!:  !:!  :!:  !:!  :!:       
+ ::: :::  ::::: ::   :::: ::   :: ::::  
+ :: :: :   : :  :   :: :  :   : :: ::   
+					]],
+				},
+				formats = {
+					header = { "%s", align = "center" },
+				},
+			},
+			indent = { enabled = false },
 			input = { enabled = true },
 			notifier = {
 				enabled = true,
 				timeout = 3000,
 			},
 			quickfile = { enabled = true },
-			scroll = { enabled = true },
+			scroll = { enabled = false },
 			statuscolumn = { enabled = true },
 			words = { enabled = true },
 			styles = {
 				notification = {
 					-- wo = { wrap = true } -- Wrap notifications
+				},
+			},
+		},
+		picker = {
+			sources = {
+				explorer = {
+					follow_file = true,
+					auto_close = true,
 				},
 			},
 		},
@@ -195,6 +217,15 @@ return {
 							statuscolumn = " ",
 							conceallevel = 3,
 						},
+					})
+				end,
+			},
+			{
+				"<leader>e",
+				desc = "File explorer",
+				function()
+					Snacks.picker.explorer({
+						auto_close = true,
 					})
 				end,
 			},

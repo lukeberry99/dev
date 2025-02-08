@@ -17,7 +17,7 @@ key("n", "<C-k>", "<C-w><C-k>", { desc = "Move focus to upper split" })
 
 -- fzf-lua
 key("n", "<leader>sp", function()
-	local dirs = { "~/dotfiles/.config/nvim/lua/plugins" }
+	local dirs = { "~/repos/github.com/lukeberry99/dvv/env/.config/nvim/lua/plugins" }
 	require("fzf-lua").live_grep({
 		filespec = "-- " .. table.concat(vim.tbl_values(dirs), " "),
 		search = "/",
