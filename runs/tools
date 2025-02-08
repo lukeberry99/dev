@@ -4,8 +4,7 @@ set -euo pipefail
 
 echo "Installing tools..."
 
-brew install --cask ghostty
-brew install --cask syncthing
+brew install --cask ghostty syncthing obsidian
 brew install git git-delta ripgrep jq fzf k9s sqlc figlet bat ranger curl lazygit tailscale tmux starship
 
 echo "✅ Tools installation completed"

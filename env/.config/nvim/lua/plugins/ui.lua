@@ -36,7 +36,7 @@ return {
 				replace_netrw = true,
 			},
 			dashboard = {
-				enabled = true,
+				enabled = false,
 				preset = {
 					header = [[
  @@@@@@@   @@@@@@   @@@@@@@   @@@@@@@@  
