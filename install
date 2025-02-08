@@ -33,7 +33,7 @@ Options:
 Example:
     ./$(basename "$0") --dry
     ./$(basename "$0") "neovim"
-    VERBOSE=1 ./$(basename "$0")
+    ./$(basename "$0") --verbose
 EOF
 }
 
@@ -139,7 +139,6 @@ main() {
 EOF
     echo -e "${NC}"
 
-    check_prerequisites
 
     local dry_run=0
     local grep_pattern=""
@@ -171,6 +170,12 @@ EOF
         shift
     done
 
+    if [[ $dry_run -eq 1 ]]; then
+        log "INFO" "[DRY RUN] Would install or update homebrew"
+    else
+        check_prerequisites
+    fi
+
     if [[ ! -d "$RUNS_DIR" ]]; then
         log "ERROR" "runs directory not found: $RUNS_DIR"
         exit 1
@@ -192,7 +197,6 @@ EOF
     local failed=0
     local total=${#scripts[@]}
 
-    echo -e "\n${BLUE}Found ${total} script(s) to process${NC}\n"
 
     log "DEBUG" "Found these scripts:"
     for script in "${scripts[@]}"; do

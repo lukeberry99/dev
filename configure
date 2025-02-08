@@ -34,7 +34,8 @@ Environment:
 
 Example:
     ./$(basename "$0") --dry
-    VERBOSE=1 ./$(basename "$0")
+    ./$(basename "$0") --verbose
+    ./$(basename "$0")
 EOF
 }
 
