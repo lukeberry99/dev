@@ -1,10 +1,18 @@
 return {
+	-- {
+	-- 	"ficcdaf/ashen.nvim",
+	-- 	lazy = false,
+	-- 	priority = 1000,
+	-- 	config = function()
+	-- 		vim.cmd("colorscheme ashen")
+	-- 	end,
+	-- },
 	{
-		"ficcdaf/ashen.nvim",
+		"shaunsingh/nord.nvim",
 		lazy = false,
 		priority = 1000,
 		config = function()
-			vim.cmd("colorscheme ashen")
+			vim.cmd("colorscheme nord")
 		end,
 	},
 	{

@@ -1,5 +1,4 @@
-theme = rose-pine
-background = 000000
+theme=nord
 
 shell-integration-features = no-cursor,no-sudo,no-title
 
