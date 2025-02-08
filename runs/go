@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+echo "Installing go and associated tooling"
+
+brew install go golang-migrate golangci-lint
+
+echo "✅ Go installation completed"
+exit 0

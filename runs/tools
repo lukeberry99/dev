@@ -5,7 +5,7 @@ set -euo pipefail
 echo "Installing tools..."
 
 brew install --cask ghostty
-brew install git git-delta ripgrep jq fzf go golang-migrate golangci-lint k9s sqlc figlet bat ranger curl lazygit tailscale syncthing tmux starship
+brew install git git-delta ripgrep jq fzf k9s sqlc figlet bat ranger curl lazygit tailscale syncthing tmux starship
 
 echo "✅ Tools installation completed"
 exit 0
