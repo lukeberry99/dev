@@ -1,0 +1,162 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+trap 'echo "[$BASH_SOURCE:$LINENO] Error: exit code $?: Command: $BASH_COMMAND"' ERR
+trap 'echo "[$BASH_SOURCE:$LINENO] Exit called"' EXIT
+trap 'echo "[$BASH_SOURCE:$LINENO] Interrupt received"' INT TERM
+
+readonly SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" &> /dev/null && pwd)"
+readonly VERBOSE=${VERBOSE:-0}
+readonly XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
+
+# Colors
+readonly RED='\033[0;31m'
+readonly GREEN='\033[0;32m'
+readonly YELLOW='\033[1;33m'
+readonly BLUE='\033[0;34m'
+readonly MAGENTA='\033[0;35m'
+readonly NC='\033[0m'
+
+usage() {
+    cat << EOF
+
+Usage: $(basename "$0") [OPTIONS]
+
+Copies configuration files from env to appropriate locations.
+
+Options:
+    --dry           Dry run mode - show what would be executed without running
+    --help, -h      Show this help message
+    --verbose, -v   Show verbose output
+
+Environment:
+    XDG_CONFIG_HOME Optional, defaults to ~/.config
+
+Example:
+    ./$(basename "$0") --dry
+    VERBOSE=1 ./$(basename "$0")
+EOF
+}
+
+log() {
+    local level=$1
+    shift
+    local message="$*"
+    local timestamp=$(date '+%Y-%m-%d %H:%M:%S')
+    
+    case "$level" in
+        "ERROR")
+            echo -e "${RED}[ERROR]${NC} ${timestamp} - $message" >&2
+            ;;
+        *)
+            if [[ ${VERBOSE} -eq 1 ]]; then
+                case "$level" in
+                    "INFO")
+                        echo -e "${GREEN}[INFO]${NC} ${timestamp} - $message"
+                        ;;
+                    "WARN")
+                        echo -e "${YELLOW}[WARN]${NC} ${timestamp} - $message"
+                        ;;
+                    "DEBUG")
+                        echo -e "${BLUE}[DEBUG]${NC} ${timestamp} - $message"
+                        ;;
+                esac
+            fi
+            ;;
+    esac
+}
+
+update_files() {
+    local source_dir=$1
+    local target_dir=$2
+    
+    log "INFO" "Copying files from: $source_dir to $target_dir"
+    
+    pushd "$source_dir" &> /dev/null || {
+        log "ERROR" "Failed to change to directory: $source_dir"
+        return 1
+    }
+    
+    while IFS= read -r -d '' config_dir; do
+        local directory="${target_dir%/}/${config_dir#./}"
+        
+        if [[ $dry_run -eq 1 ]]; then
+            log "INFO" "[DRY RUN] Would remove: $directory"
+            log "INFO" "[DRY RUN] Would copy: $config_dir to $target_dir"
+        else
+            log "DEBUG" "Removing: $directory"
+            rm -rf "$directory"
+            
+            log "DEBUG" "Copying: $config_dir to $target_dir"
+            cp -r "$config_dir" "$target_dir"
+        fi
+    done < <(find . -mindepth 1 -maxdepth 1 -type d -print0)
+    
+    popd &> /dev/null || true
+}
+
+copy_file() {
+    local source=$1
+    local target=$2
+    
+    if [[ $dry_run -eq 1 ]]; then
+        log "INFO" "[DRY RUN] Would remove: $target"
+        log "INFO" "[DRY RUN] Would copy: $source to $target"
+    else
+        log "DEBUG" "Removing: $target"
+        rm -f "$target"
+        
+        log "DEBUG" "Copying: $source to $target"
+        cp "$source" "$target"
+    fi
+}
+
+main() {
+    echo -e "${MAGENTA}"
+    cat << "EOF"
+╔════════════════════════════════════════════╗
+║         Config Files Deployment            ║
+║         ----------------------             ║
+║    🚀 Setting up your environment         ║
+╚════════════════════════════════════════════╝
+EOF
+    echo -e "${NC}"
+
+    local dry_run=0
+    local verbose=${VERBOSE}
+
+    while [[ $# -gt 0 ]]; do
+        case "$1" in
+            --dry)
+                dry_run=1
+                ;;
+            --help|-h)
+                usage
+                exit 0
+                ;;
+            --verbose|-v)
+                verbose=1
+                export VERBOSE=1
+                ;;
+            *)
+                log "ERROR" "Unexpected argument: $1"
+                usage
+                exit 1
+                ;;
+        esac
+        shift
+    done
+
+    log "INFO" "Using XDG_CONFIG_HOME: $XDG_CONFIG_HOME"
+
+    # Update configuration directories
+    update_files "$SCRIPT_DIR/env/.config" "$XDG_CONFIG_HOME"
+
+    copy_file "$SCRIPT_DIR/env/.zshrc" "$HOME/.zshrc"
+
+    log "INFO" "Configuration deployment completed successfully"
+}
+
+main "$@"
+

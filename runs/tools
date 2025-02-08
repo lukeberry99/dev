@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+echo "Installing tools..."
+
+brew install --cask ghostty
+brew install git
+brew install git-delta
+brew install ripgrep
+brew install jq
+brew install fzf
+brew install go
+brew install golang-migrate
+brew install golangci-lint
+brew install k9s
+brew install sqlc
+brew install figlet
+brew install bat
+brew install ranger
+brew install curl
+brew install lazygit
+brew install tailscale
+brew install syncthing 
+brew install tmux
+brew install starship
+
+echo "✅ libs installation completed"
+exit 0

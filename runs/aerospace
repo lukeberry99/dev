@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+echo "Installing Aerospace window manager..."
+brew install --cask nikitabobko/tap/aerospace || {
+    echo "Failed to install Aerospace"
+    exit 1
+}
+
+# Configure window drag gesture
+# echo "Configuring window drag gesture..."
+# defaults write -g NSWindowShouldDragOnGesture -bool true || {
+#     echo "Failed to configure window drag gesture"
+#     exit 1
+# }
+
+echo "✅ Aerospace setup completed successfully"
+
+exit 0
