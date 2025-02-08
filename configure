@@ -45,22 +45,18 @@ log() {
     local timestamp=$(date '+%Y-%m-%d %H:%M:%S')
     
     case "$level" in
+        "INFO")
+            echo -e "${GREEN}[INFO]${NC} ${timestamp} - $message"
+            ;;
+        "WARN")
+            echo -e "${YELLOW}[WARN]${NC} ${timestamp} - $message"
+            ;;
         "ERROR")
             echo -e "${RED}[ERROR]${NC} ${timestamp} - $message" >&2
             ;;
-            "INFO")
-                echo -e "${GREEN}[INFO]${NC} ${timestamp} - $message"
-                ;;
-            "WARN")
-                echo -e "${YELLOW}[WARN]${NC} ${timestamp} - $message"
-                ;;
-        *)
+        "DEBUG")
             if [[ ${VERBOSE} -eq 1 ]]; then
-                case "$level" in
-                    "DEBUG")
-                        echo -e "${BLUE}[DEBUG]${NC} ${timestamp} - $message"
-                        ;;
-                esac
+                echo -e "${BLUE}[DEBUG]${NC} ${timestamp} - $message"
             fi
             ;;
     esac
