@@ -148,6 +148,7 @@ EOF
 
     # Update configuration directories
     update_files "$SCRIPT_DIR/env/.config" "$XDG_CONFIG_HOME"
+    update_files "$SCRIPT_DIR/env/.local" "$HOME/.local"
 
     copy_file "$SCRIPT_DIR/env/.zshrc" "$HOME/.zshrc"
     copy_file "$SCRIPT_DIR/env/.zprofile" "$HOME/.zprofile"

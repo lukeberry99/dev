@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+pushd ~/repos/github.com/lukeberry99/dev
+git add .
+git commit -m 'automated dev commit'
+git push
+popd
