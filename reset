@@ -57,20 +57,6 @@ delete_items() {
     local dry_run=$1
 
     if [[ $dry_run -eq 1 ]]; then
-        log "INFO" "[DRY RUN] Would uninstall all Homebrew packages"
-    else
-        log "INFO" "Uninstalling all Homebrew packages..."
-        brew list | xargs brew uninstall --force
-    fi
-
-    if [[ $dry_run -eq 1 ]]; then
-        log "INFO" "[DRY RUN] Would uninstall Homebrew itself"
-    else
-        log "INFO" "Uninstalling Homebrew..."
-        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/uninstall.sh)"
-    fi
-
-    if [[ $dry_run -eq 1 ]]; then
         log "INFO" "[DRY RUN] Would remove ~/neovim directory"
     else
         log "INFO" "Removing ~/neovim directory..."
@@ -81,7 +67,7 @@ delete_items() {
         log "INFO" "[DRY RUN] Would remove Neovim binary at /usr/local/bin"
     else
         log "INFO" "Removing Neovim binary at /usr/local/bin..."
-        rm -f /usr/local/bin/nvim
+        sudo rm -f /usr/local/bin/nvim
     fi
 
     if [[ $dry_run -eq 1 ]]; then
@@ -110,6 +96,27 @@ delete_items() {
     else
         log "INFO" "Removing ~/.zshrc file..."
         rm -f ~/.zshrc
+    fi
+
+    if [[ $dry_run -eq 1 ]]; then
+        log "INFO" "[DRY RUN] Would remove ~/.zprofile file"
+    else
+        log "INFO" "Removing ~/.zprofile file..."
+        rm -f ~/.zprofile
+    fi
+
+    if [[ $dry_run -eq 1 ]]; then
+        log "INFO" "[DRY RUN] Would uninstall all Homebrew packages"
+    else
+        log "INFO" "Uninstalling all Homebrew packages..."
+        brew list | xargs brew uninstall --force
+    fi
+
+    if [[ $dry_run -eq 1 ]]; then
+        log "INFO" "[DRY RUN] Would uninstall Homebrew itself"
+    else
+        log "INFO" "Uninstalling Homebrew..."
+        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/uninstall.sh)"
     fi
 }
 

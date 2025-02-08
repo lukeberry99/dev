@@ -150,6 +150,7 @@ EOF
     update_files "$SCRIPT_DIR/env/.config" "$XDG_CONFIG_HOME"
 
     copy_file "$SCRIPT_DIR/env/.zshrc" "$HOME/.zshrc"
+    copy_file "$SCRIPT_DIR/env/.zprofile" "$HOME/.zprofile"
 
     log "INFO" "Configuration deployment completed successfully"
 }
