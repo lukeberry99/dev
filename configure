@@ -152,6 +152,7 @@ EOF
 
     copy_file "$SCRIPT_DIR/env/.zshrc" "$HOME/.zshrc"
     copy_file "$SCRIPT_DIR/env/.zprofile" "$HOME/.zprofile"
+    copy_file "$SCRIPT_DIR/env/.tmux-sessionizer" "$HOME/.tmux-sessionizer"
 
     log "INFO" "Configuration deployment completed successfully"
 }
