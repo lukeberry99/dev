@@ -16,12 +16,10 @@ parse_git_url() {
     # Remove the username@ part if present
     url="${url#*@}"
 
-    # Extract the domain, organization, and repository name
     domain=$(echo "$url" | cut -d'/' -f1)
     org=$(echo "$url" | cut -d'/' -f2)
     repo=$(echo "$url" | cut -d'/' -f3)
 
-    # Remove the .git suffix only if it is present
     if [[ "$repo" == *.git ]]; then
         repo="${repo%.git}"
     fi
@@ -40,17 +38,13 @@ clone_repo() {
 
     dir_path=$(parse_git_url "$url")
 
-    # Create directory if it doesn't exist
     mkdir -p "$base_dir/$dir_path"
 
-    # Clone the repository
     git clone "$url" "$base_dir/$dir_path"
 
-    # Output the directory where it was cloned
     echo "Cloned into: $base_dir/$dir_path"
 }
 
-# Check if a git URL is provided
 if [ -z "$1" ]; then
     echo "Usage: $0 <git-url>"
     exit 1
