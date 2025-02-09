@@ -35,6 +35,7 @@ return {
 		lazy = false,
 		---@type snacks.Config
 		opts = {
+			animate = { enabled = true },
 			picker = {
 				enabled = true,
 			},
@@ -43,27 +44,12 @@ return {
 				enabled = true,
 				replace_netrw = true,
 			},
-			dashboard = {
-				enabled = false,
-				preset = {
-					header = [[
- @@@@@@@   @@@@@@   @@@@@@@   @@@@@@@@  
-@@@@@@@@  @@@@@@@@  @@@@@@@@  @@@@@@@@  
-!@@       @@!  @@@  @@!  @@@  @@!       
-!@!       !@!  @!@  !@!  @!@  !@!       
-!@!       @!@  !@!  @!@  !@!  @!!!:!    
-!!!       !@!  !!!  !@!  !!!  !!!!!:    
-:!!       !!:  !!!  !!:  !!!  !!:       
-:!:       :!:  !:!  :!:  !:!  :!:       
- ::: :::  ::::: ::   :::: ::   :: ::::  
- :: :: :   : :  :   :: :  :   : :: ::   
-					]],
-				},
-				formats = {
-					header = { "%s", align = "center" },
+			indent = { enabled = true },
+			dim = {
+				animate = {
+					enabled = true,
 				},
 			},
-			indent = { enabled = false },
 			input = { enabled = true },
 			notifier = {
 				enabled = true,
