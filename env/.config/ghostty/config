@@ -2,7 +2,7 @@ theme=nord
 
 shell-integration-features = no-cursor,no-sudo,no-title
 
-title="80085"
+title="Ghostty"
 
 font-size=12
 font-feature=-liga
