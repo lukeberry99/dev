@@ -30,12 +30,12 @@ key("n", "<leader>sr", ":FzfLua registers<CR>", { desc = "Search registers" })
 key("n", "<leader><leader>", ":FzfLua buffers<CR>", { desc = "Search buffers" })
 key("n", "<leader>gc", ":FzfLua git_bcommits<CR>", { desc = "Search file commits" })
 
--- vim-tmux-navigator
-key("n", "<c-h>", "<cmd>TmuxNavigateLeft<CR>")
-key("n", "<c-j>", "<cmd>TmuxNavigateDown<CR>")
-key("n", "<c-k>", "<cmd>TmuxNavigateUp<CR>")
-key("n", "<c-l>", "<cmd>TmuxNavigateRight<CR>")
-key("n", "<c-\\>", "<cmd>TmuxNavigatePrevious<CR>")
+-- -- vim-tmux-navigator
+-- key("n", "<c-h>", "<cmd>TmuxNavigateLeft<CR>")
+-- key("n", "<c-j>", "<cmd>TmuxNavigateDown<CR>")
+-- key("n", "<c-k>", "<cmd>TmuxNavigateUp<CR>")
+-- key("n", "<c-l>", "<cmd>TmuxNavigateRight<CR>")
+-- key("n", "<c-\\>", "<cmd>TmuxNavigatePrevious<CR>")
 
 -- lsp
 key("n", "<leader>rn", vim.lsp.buf.rename, { desc = "LSP: Rename" })
