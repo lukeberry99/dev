@@ -1,20 +1,20 @@
 return {
-	-- {
-	-- 	"ficcdaf/ashen.nvim",
-	-- 	lazy = false,
-	-- 	priority = 1000,
-	-- 	config = function()
-	-- 		vim.cmd("colorscheme ashen")
-	-- 	end,
-	-- },
 	{
-		"shaunsingh/nord.nvim",
+		"ficcdaf/ashen.nvim",
 		lazy = false,
 		priority = 1000,
 		config = function()
-			vim.cmd("colorscheme nord")
+			vim.cmd("colorscheme ashen")
 		end,
 	},
+	-- {
+	-- 	"shaunsingh/nord.nvim",
+	-- 	lazy = false,
+	-- 	priority = 1000,
+	-- 	config = function()
+	-- 		vim.cmd("colorscheme nord")
+	-- 	end,
+	-- },
 	{
 		"folke/which-key.nvim",
 		event = "VeryLazy",
