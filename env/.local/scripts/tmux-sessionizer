@@ -20,11 +20,15 @@ hydrate() {
         tmux send-keys -t "$1" "source $HOME/.tmux-sessionizer" C-m
     fi
 }
-
+identifier=$(hostname)
 if [[ $# -eq 1 ]]; then
     selected="$1"
 else
-    selected=$(find ~/repos -mindepth 3 -maxdepth 3 -type d -o -path ~/vault -prune 2>/dev/null | fzf)
+    if [[ "$identifier" == "dev.local" ]]; then
+        selected=$(find ~/repos ~/repos/github.com/payzip -mindepth 3 -maxdepth 3 -type d -o -path ~/vault -prune 2>/dev/null | fzf)
+    else
+        selected=$(find ~/repos -mindepth 3 -maxdepth 3 -type d -o -path ~/vault -prune 2>/dev/null | fzf)
+    fi
 fi
 
 [[ -z $selected ]] && exit 0
