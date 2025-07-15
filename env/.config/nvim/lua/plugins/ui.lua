@@ -36,9 +36,6 @@ return {
 		---@type snacks.Config
 		opts = {
 			animate = { enabled = true },
-			picker = {
-				enabled = true,
-			},
 			bigfile = { enabled = true },
 			explorer = {
 				enabled = true,
@@ -66,10 +63,14 @@ return {
 			},
 		},
 		picker = {
+			enabled = true,
 			sources = {
+				files = { hidden = true },
 				explorer = {
 					follow_file = true,
-					auto_close = true,
+					layout = {
+						position = "right",
+					},
 				},
 			},
 		},
@@ -218,9 +219,24 @@ return {
 				"<leader>e",
 				desc = "File explorer",
 				function()
-					Snacks.picker.explorer({
-						auto_close = true,
-					})
+					Snacks.explorer()
+					-- Snacks.picker.explorer({
+					-- 	auto_close = true,
+					-- })
+				end,
+			},
+			{
+				"<leader>sf",
+				desc = "Picker",
+				function()
+					Snacks.picker.smart()
+				end,
+			},
+			{
+				"<leader>sg",
+				desc = "grep",
+				function()
+					Snacks.picker.grep()
 				end,
 			},
 		},
