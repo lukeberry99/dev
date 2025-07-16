@@ -61,15 +61,17 @@ return {
 					-- wo = { wrap = true } -- Wrap notifications
 				},
 			},
-		},
-		picker = {
-			enabled = true,
-			sources = {
-				files = { hidden = true },
-				explorer = {
-					follow_file = true,
-					layout = {
-						position = "right",
+			picker = {
+				enabled = true,
+				sources = {
+					files = { hidden = true },
+					explorer = {
+						follow_file = true,
+						layout = { 
+							layout = { 
+								position = "right" 
+							} 
+						},
 					},
 				},
 			},
@@ -219,10 +221,7 @@ return {
 				"<leader>e",
 				desc = "File explorer",
 				function()
-					Snacks.explorer()
-					-- Snacks.picker.explorer({
-					-- 	auto_close = true,
-					-- })
+					Snacks.picker.explorer()
 				end,
 			},
 			{
