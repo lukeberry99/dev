@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-version="${NVIM_VERSION:-v0.10.2}"
+version="${NVIM_VERSION:-v0.11.3}"
 echo "Installing Neovim version: $version"
 
 # Install dependencies via Homebrew

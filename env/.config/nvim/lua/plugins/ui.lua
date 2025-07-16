@@ -66,14 +66,6 @@ return {
 			vim.g.gruvbox_material_disable_italic_comment = 0
 		end,
 	},
-	-- {
-	-- 	"shaunsingh/nord.nvim",
-	-- 	lazy = false,
-	-- 	priority = 1000,
-	-- 	config = function()
-	-- 		vim.cmd("colorscheme nord")
-	-- 	end,
-	-- },
 	{
 		"folke/which-key.nvim",
 		event = "VeryLazy",
@@ -187,7 +179,7 @@ return {
 					},
 				},
 				sources = {
-					files = { 
+					files = {
 						hidden = true,
 						follow_symlinks = true,
 					},
@@ -197,6 +189,9 @@ return {
 					explorer = {
 						follow_file = true,
 						hidden = true,
+						layout = {
+							layout = { direction = "right" },
+						},
 					},
 				},
 			},
