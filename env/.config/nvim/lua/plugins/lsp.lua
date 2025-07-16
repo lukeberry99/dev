@@ -5,8 +5,7 @@ return {
 			"williamboman/mason.nvim",
 			"williamboman/mason-lspconfig.nvim",
 			"WhoIsSethDaniel/mason-tool-installer.nvim",
-			"hrsh7th/cmp-nvim-lsp",
-			"hrsh7th/nvim-cmp",
+			"saghen/blink.cmp",
 		},
 		config = function()
 			vim.api.nvim_create_autocmd("LspAttach", {
@@ -36,7 +35,7 @@ return {
 			})
 
 			local capabilities = vim.lsp.protocol.make_client_capabilities()
-			capabilities = vim.tbl_deep_extend("force", capabilities, require("cmp_nvim_lsp").default_capabilities())
+			capabilities = vim.tbl_deep_extend("force", capabilities, require("blink.cmp").get_lsp_capabilities())
 
 			local servers = {
 				flake8 = {},
@@ -85,6 +84,21 @@ return {
 						server.capabilities = vim.tbl_deep_extend("force", {}, capabilities, server.capabilities or {})
 						require("lspconfig")[server_name].setup(server)
 					end,
+				},
+			})
+		end,
+	},
+	{
+		"rachartier/tiny-inline-diagnostic.nvim",
+		event = "VeryLazy",
+		config = function()
+			require("tiny-inline-diagnostic").setup({
+				preset = "classic",
+				options = {
+					show_source = true,
+					use_icons_from_diagnostic = true,
+					multilines = true,
+					show_all_diags_on_cursorline = true,
 				},
 			})
 		end,

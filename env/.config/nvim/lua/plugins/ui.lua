@@ -1,10 +1,69 @@
 return {
 	{
-		"ficcdaf/ashen.nvim",
+		"catppuccin/nvim",
+		name = "catppuccin",
 		lazy = false,
 		priority = 1000,
 		config = function()
-			vim.cmd("colorscheme ashen")
+			require("catppuccin").setup({
+				flavour = "mocha", -- latte, frappe, macchiato, mocha
+				background = { -- :h background
+					light = "latte",
+					dark = "mocha",
+				},
+				transparent_background = false,
+				show_end_of_buffer = false,
+				term_colors = true,
+				dim_inactive = {
+					enabled = false,
+					shade = "dark",
+					percentage = 0.15,
+				},
+				no_italic = false,
+				no_bold = false,
+				no_underline = false,
+				styles = {
+					comments = { "italic" },
+					conditionals = { "italic" },
+					loops = {},
+					functions = {},
+					keywords = {},
+					strings = {},
+					variables = {},
+					numbers = {},
+					booleans = {},
+					properties = {},
+					types = {},
+					operators = {},
+				},
+				color_overrides = {},
+				custom_highlights = {},
+				integrations = {
+					cmp = true,
+					gitsigns = true,
+					nvimtree = true,
+					treesitter = true,
+					notify = false,
+					mini = {
+						enabled = true,
+						indentscope_color = "",
+					},
+					snacks = true,
+					which_key = true,
+					noice = true,
+				},
+			})
+			vim.cmd("colorscheme catppuccin")
+		end,
+	},
+	{
+		"sainnhe/gruvbox-material",
+		lazy = true,
+		config = function()
+			vim.g.gruvbox_material_background = "hard"
+			vim.g.gruvbox_material_better_performance = 1
+			vim.g.gruvbox_material_enable_italic = 1
+			vim.g.gruvbox_material_disable_italic_comment = 0
 		end,
 	},
 	-- {
@@ -18,7 +77,21 @@ return {
 	{
 		"folke/which-key.nvim",
 		event = "VeryLazy",
-		opts = {},
+		opts = {
+			preset = "helix",
+			icons = {
+				breadcrumb = "»",
+				separator = "➜",
+				group = "+",
+			},
+			win = {
+				border = "single",
+				padding = { 1, 2 },
+				wo = {
+					winblend = 0,
+				},
+			},
+		},
 		keys = {
 			{
 				"<leader>?",
@@ -27,6 +100,43 @@ return {
 				end,
 				desc = "Buffer Local Keymaps (which-key)",
 			},
+		},
+	},
+	{
+		"folke/noice.nvim",
+		event = "VeryLazy",
+		opts = {
+			lsp = {
+				override = {
+					["vim.lsp.util.convert_input_to_markdown_lines"] = true,
+					["vim.lsp.util.stylize_markdown"] = true,
+					["cmp.entry.get_documentation"] = true,
+				},
+			},
+			routes = {
+				{
+					filter = {
+						event = "msg_show",
+						any = {
+							{ find = "%d+L, %d+B" },
+							{ find = "; after #%d+" },
+							{ find = "; before #%d+" },
+						},
+					},
+					view = "mini",
+				},
+			},
+			presets = {
+				bottom_search = true,
+				command_palette = true,
+				long_message_to_split = true,
+				inc_rename = false,
+				lsp_doc_border = true,
+			},
+		},
+		dependencies = {
+			"MunifTanjim/nui.nvim",
+			"rcarriga/nvim-notify",
 		},
 	},
 	{
@@ -60,19 +170,33 @@ return {
 				notification = {
 					-- wo = { wrap = true } -- Wrap notifications
 				},
+				picker = {
+					border = "single",
+					title_pos = "center",
+					backdrop = false,
+				},
 			},
 			picker = {
 				enabled = true,
+				win = {
+					input = {
+						keys = {
+							["<c-j>"] = "select_next",
+							["<c-k>"] = "select_prev",
+						},
+					},
+				},
 				sources = {
-					files = { hidden = true },
+					files = { 
+						hidden = true,
+						follow_symlinks = true,
+					},
+					grep = {
+						hidden = true,
+					},
 					explorer = {
 						follow_file = true,
 						hidden = true,
-						layout = { 
-							layout = { 
-								position = "right" 
-							} 
-						},
 					},
 				},
 			},
