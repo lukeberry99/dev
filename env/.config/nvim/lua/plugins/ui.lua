@@ -67,6 +67,7 @@ return {
 					files = { hidden = true },
 					explorer = {
 						follow_file = true,
+						hidden = true,
 						layout = { 
 							layout = { 
 								position = "right" 
