@@ -16,7 +16,9 @@ parse_git_url() {
     # Remove the username@ part if present
     url="${url#*@}"
 
-    domain=$(echo "$url" | cut -d'/' -f1)
+    # Handle port numbers by removing them
+    domain=$(echo "$url" | cut -d'/' -f1 | sed 's/:[0-9]*//')
+
     org=$(echo "$url" | cut -d'/' -f2)
     repo=$(echo "$url" | cut -d'/' -f3)
 
