@@ -5,12 +5,6 @@ key("<leader>bn", ":bnext<CR>", "n") -- Next buffer
 key("<leader>bp", ":bprevious<CR>", "n") -- Previous buffer
 key("<leader>bd", ":bdelete<CR>", "n") -- Delete buffer
 
--- Pane navigation
-key("<C-h>", "<C-w>h", "n")
-key("<C-j>", "<C-w>j", "n")
-key("<C-k>", "<C-w>k", "n")
-key("<C-l>", "<C-w>l", "n")
-
 -- FZF-LUA
 key("<leader>sf", "FzfLua files", "n") -- Find files
 key("<leader>sg", "FzfLua live_grep", "n") -- Grep across entire project 
@@ -33,10 +27,13 @@ key("<C-Right>", ":vertical resize +2<CR>", "n") -- Increase window width
 key("<C-Left>", ":vertical resize -2<CR>", "n") -- Decrease window width
 
 -- Better window navigation
-key("<C-h>", "<C-w>h", "n") -- Move to left window 
-key("<C-j>", "<C-w>j", "n") -- Move to bottom window 
-key("<C-k>", "<C-w>k", "n") -- Move to top window 
-key("<C-l>", "<C-w>l", "n") -- Move to right window 
+vim.keymap.set("n", "<C-h>", "<C-w>h") -- Move to left window 
+vim.keymap.set("n", "<C-j>", "<C-w>j") -- Move to bottom window 
+vim.keymap.set("n", "<C-k>", "<C-w>k") -- Move to top window 
+vim.keymap.set("n", "<C-l>", "<C-w>l") -- Move to right window 
+
+-- Quit window
+key("q", "q", "n")
 
 -- Better line indenting in visual mode
 key("<", "<gv", "v") -- Indent left and reselect
@@ -44,10 +41,9 @@ key(">", ">gv", "v") -- Indent right and reselect
 
 -- Quick file navigation
 key("<leader>e", ":Explore<CR>", "n") -- Open file explorer
-key("<leader>ff", ":find ", "n") -- Find file
 
 -- Vim fugitive
-key("<leader>gg", ":Git<CR>", "n")
+key("<leader>gg", "Git", "n")
 
 -- Copy full file-path
 vim.keymap.set("n", "<leader>pa", function() 
