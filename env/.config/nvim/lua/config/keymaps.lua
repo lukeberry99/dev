@@ -33,7 +33,18 @@ vim.keymap.set("n", "<C-k>", "<C-w>k") -- Move to top window
 vim.keymap.set("n", "<C-l>", "<C-w>l") -- Move to right window 
 
 -- Quit window
-key("q", "q", "n")
+local function smart_quit()
+  if vim.fn.winnr('$') > 1 then
+    vim.cmd('q')
+  elseif #vim.fn.getbufinfo({buflisted=1}) > 1 then
+    vim.cmd('bdelete')
+  else
+    vim.cmd('enew')
+    vim.cmd('bdelete #')
+  end
+end
+
+vim.keymap.set("n", "q", smart_quit)
 
 -- Better line indenting in visual mode
 key("<", "<gv", "v") -- Indent left and reselect
