@@ -55,6 +55,7 @@ key("<leader>e", ":Explore<CR>", "n") -- Open file explorer
 
 -- Vim fugitive
 key("<leader>gg", "Git", "n")
+key("<leader>gb", "G blame", "n")
 
 -- Copy full file-path
 vim.keymap.set("n", "<leader>pa", function() 
@@ -65,9 +66,16 @@ end)
 
 -- Terminal
 vim.keymap.set("n", "<leader>t", FloatingTerminal, { noremap = true, silent = true, desc = "Toggle floating terminal" })
+vim.keymap.set("n", "<leader>lg", FloatingLazygit, { noremap = true, silent = true, desc = "Toggle floating lazygit" })
+vim.keymap.set("n", "<leader>ht", FloatingHtop, { noremap = true, silent = true, desc = "Toggle floating htop" })
+
+-- Close any floating terminal from terminal mode
 vim.keymap.set("t", "<Esc>", function()
-  if terminal_state.is_open then
-    vim.api.nvim_win_close(terminal_state.win, false)
-    terminal_state.is_open = false
+  for _, state in pairs(terminal_instances) do
+    if state.is_open and vim.api.nvim_win_is_valid(state.win) then
+      vim.api.nvim_win_close(state.win, false)
+      state.is_open = false
+      break
+    end
   end
 end, { noremap = true, silent = true, desc = "Close floating terminal from terminal mode" })

@@ -136,26 +136,35 @@ if vim.fn.isdirectory(undodir) == 0 then
   vim.fn.mkdir(undodir, "p")
 end
 
--- Floating terminal
-local terminal_state = {
-  buf = nil,
-  win = nil,
-  is_open = false
-}
+-- Floating terminal system
+local terminal_instances = {}
 
-local function FloatingTerminal()
+local function create_floating_terminal(command, instance_name)
+  instance_name = instance_name or "default"
+  
+  -- Initialize instance if it doesn't exist
+  if not terminal_instances[instance_name] then
+    terminal_instances[instance_name] = {
+      buf = nil,
+      win = nil,
+      is_open = false,
+      command = command
+    }
+  end
+  
+  local state = terminal_instances[instance_name]
+  
   -- If terminal is already open, close it (toggle behavior)
-  if terminal_state.is_open and vim.api.nvim_win_is_valid(terminal_state.win) then
-    vim.api.nvim_win_close(terminal_state.win, false)
-    terminal_state.is_open = false
+  if state.is_open and vim.api.nvim_win_is_valid(state.win) then
+    vim.api.nvim_win_close(state.win, false)
+    state.is_open = false
     return
   end
 
   -- Create buffer if it doesn't exist or is invalid
-  if not terminal_state.buf or not vim.api.nvim_buf_is_valid(terminal_state.buf) then
-    terminal_state.buf = vim.api.nvim_create_buf(false, true)
-    -- Set buffer options for better terminal experience
-    vim.api.nvim_buf_set_option(terminal_state.buf, 'bufhidden', 'hide')
+  if not state.buf or not vim.api.nvim_buf_is_valid(state.buf) then
+    state.buf = vim.api.nvim_create_buf(false, true)
+    vim.api.nvim_buf_set_option(state.buf, 'bufhidden', 'hide')
   end
 
   -- Calculate window dimensions
@@ -165,7 +174,7 @@ local function FloatingTerminal()
   local col = math.floor((vim.o.columns - width) / 2)
 
   -- Create the floating window
-  terminal_state.win = vim.api.nvim_open_win(terminal_state.buf, true, {
+  state.win = vim.api.nvim_open_win(state.buf, true, {
     relative = 'editor',
     width = width,
     height = height,
@@ -176,10 +185,8 @@ local function FloatingTerminal()
   })
 
   -- Set transparency for the floating window
-  vim.api.nvim_win_set_option(terminal_state.win, 'winblend', 0)
-
-  -- Set transparent background for the window
-  vim.api.nvim_win_set_option(terminal_state.win, 'winhighlight',
+  vim.api.nvim_win_set_option(state.win, 'winblend', 0)
+  vim.api.nvim_win_set_option(state.win, 'winhighlight',
     'Normal:FloatingTermNormal,FloatBorder:FloatingTermBorder')
 
   -- Define highlight groups for transparency
@@ -188,7 +195,7 @@ local function FloatingTerminal()
 
   -- Start terminal if not already running
   local has_terminal = false
-  local lines = vim.api.nvim_buf_get_lines(terminal_state.buf, 0, -1, false)
+  local lines = vim.api.nvim_buf_get_lines(state.buf, 0, -1, false)
   for _, line in ipairs(lines) do
     if line ~= "" then
       has_terminal = true
@@ -197,28 +204,44 @@ local function FloatingTerminal()
   end
 
   if not has_terminal then
-    vim.fn.termopen(os.getenv("SHELL"))
+    vim.fn.termopen(command or os.getenv("SHELL"))
   end
 
-  terminal_state.is_open = true
+  state.is_open = true
   vim.cmd("startinsert")
 
   -- Set up auto-close on buffer leave 
   vim.api.nvim_create_autocmd("BufLeave", {
-    buffer = terminal_state.buf,
+    buffer = state.buf,
     callback = function()
-      if terminal_state.is_open and vim.api.nvim_win_is_valid(terminal_state.win) then
-        vim.api.nvim_win_close(terminal_state.win, false)
-        terminal_state.is_open = false
+      if state.is_open and vim.api.nvim_win_is_valid(state.win) then
+        vim.api.nvim_win_close(state.win, false)
+        state.is_open = false
       end
     end,
     once = true
   })
 end
 
--- Make these globaly accessible for keymaps
+-- Convenience functions for specific terminals
+local function FloatingTerminal()
+  create_floating_terminal(nil, "default")
+end
+
+local function FloatingLazygit()
+  create_floating_terminal("lazygit", "lazygit")
+end
+
+local function FloatingHtop()
+  create_floating_terminal("htop", "htop")
+end
+
+-- Make these globally accessible for keymaps
 _G.FloatingTerminal = FloatingTerminal
-_G.terminal_state = terminal_state
+_G.FloatingLazygit = FloatingLazygit
+_G.FloatingHtop = FloatingHtop
+_G.create_floating_terminal = create_floating_terminal
+_G.terminal_instances = terminal_instances
 
 -- Markdown-specific settings
 vim.api.nvim_create_autocmd("FileType", {
