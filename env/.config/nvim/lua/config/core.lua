@@ -220,3 +220,15 @@ end
 _G.FloatingTerminal = FloatingTerminal
 _G.terminal_state = terminal_state
 
+-- Markdown-specific settings
+vim.api.nvim_create_autocmd("FileType", {
+  group = augroup,
+  pattern = "markdown",
+  callback = function()
+    vim.opt_local.textwidth = 100
+    vim.opt_local.wrap = true
+    vim.opt_local.linebreak = true
+    vim.opt_local.formatoptions:append("t")
+  end,
+})
+
