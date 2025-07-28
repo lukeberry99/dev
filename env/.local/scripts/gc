@@ -6,21 +6,32 @@ parse_git_url() {
     local domain
     local org
     local repo
+    local path_part
 
     # Remove the protocol (https:// or ssh://)
     url="${url#*://}"
 
-    # For SSH URLs, replace ':' with '/' to handle the domain correctly
-    url=$(echo "$url" | sed 's/:/\//')
-
     # Remove the username@ part if present
     url="${url#*@}"
 
-    # Handle port numbers by removing them
-    domain=$(echo "$url" | cut -d'/' -f1 | sed 's/:[0-9]*//')
+    # For SSH URLs with port numbers, handle the special case
+    if [[ "$url" =~ ^([^:/]+):([0-9]+)/(.+)$ ]]; then
+        # URL has format: domain:port/path
+        domain="${BASH_REMATCH[1]}"
+        path_part="${BASH_REMATCH[3]}"
+    elif [[ "$url" =~ ^([^/]+)/(.+)$ ]]; then
+        # URL has format: domain/path (no port)
+        domain="${BASH_REMATCH[1]}"
+        path_part="${BASH_REMATCH[2]}"
+    else
+        # Fallback: treat the whole thing as path
+        domain="unknown"
+        path_part="$url"
+    fi
 
-    org=$(echo "$url" | cut -d'/' -f2)
-    repo=$(echo "$url" | cut -d'/' -f3)
+    # Parse org and repo from the path
+    org=$(echo "$path_part" | cut -d'/' -f1)
+    repo=$(echo "$path_part" | cut -d'/' -f2)
 
     if [[ "$repo" == *.git ]]; then
         repo="${repo%.git}"
