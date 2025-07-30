@@ -7,3 +7,6 @@ title="Ghostty"
 font-size=14
 font-feature=-liga
 font-thicken=true 
+
+background-opacity=0.75
+background-blur-radius=20

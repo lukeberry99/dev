@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-version="${NVIM_VERSION:-v0.11.3}"
+version="${NVIM_VERSION:-nightly}"
 echo "Installing Neovim version: $version"
 
 # Install dependencies via Homebrew
@@ -22,6 +22,9 @@ cd "$HOME/neovim" || exit 1
 
 echo "Updating repository and checking out version $version..."
 git fetch --all || exit 1
+if [ "$version" = "nightly" ]; then
+    git fetch origin +refs/tags/nightly:refs/tags/nightly --force || exit 1
+fi
 git checkout "$version" || exit 1
 
 echo "Building Neovim..."

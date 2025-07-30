@@ -51,7 +51,7 @@ key("<", "<gv", "v") -- Indent left and reselect
 key(">", ">gv", "v") -- Indent right and reselect
 
 -- Quick file navigation
-key("<leader>e", ":Explore<CR>", "n") -- Open file explorer
+key("<leader>e", ":Oil<CR>", "n") -- Open file explorer
 
 -- Vim fugitive
 key("<leader>gg", "Git", "n")
