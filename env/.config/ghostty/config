@@ -10,3 +10,5 @@ font-thicken=true
 
 background-opacity=0.75
 background-blur-radius=20
+
+keybind=alt+enter=toggle_window_decorations
