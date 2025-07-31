@@ -1,5 +1,39 @@
 version: "1.0"
+
+homebrew:
+  auto_update: true
+  cleanup_after: true
+
+logging:
+  level: "info"
+  format: "console"
+
+dotfiles:
+  backup_dir: "~/.devtool/backups"
+  strategy: "copy"
+  mappings:
+    "env/.config": "~/.config"
+    "env/.local": "~/.local"
+    "env/.zshrc": "~/.zshrc"
+    "env/.zprofile": "~/.zprofile"
+    "env/.tmux-sessionizer": "~/.tmux-sessionizer"
+
 tools:
+  aerospace:
+    source: "homebrew"
+    homebrew_args: ["--cask", "nikitabobko/tap/aerospace"]
+    enabled: true
+    
+  go:
+    source: "homebrew"
+    enabled: true
+  golang-migrate:
+    source: "homebrew"
+    enabled: true
+  golangci-lint:
+    source: "homebrew"
+    enabled: true
+    
   neovim:
     source: "build"
     version: "nightly"
@@ -10,4 +44,100 @@ tools:
         - "make CMAKE_BUILD_TYPE=RelWithDebInfo"
       install_steps:
         - "sudo make install"
+    enabled: true
+    
+  fnm:
+    source: "homebrew"
+    enabled: true
+    
+  ghostty:
+    source: "homebrew"
+    homebrew_args: ["--cask"]
+    enabled: true
+  syncthing:
+    source: "homebrew"
+    homebrew_args: ["--cask"]
+    enabled: true
+  obsidian:
+    source: "homebrew"
+    homebrew_args: ["--cask"]
+    enabled: true
+  raycast:
+    source: "homebrew"
+    homebrew_args: ["--cask"]
+    enabled: true
+  cameracontroller:
+    source: "homebrew"
+    homebrew_args: ["--cask"]
+    enabled: true
+    
+  git:
+    source: "homebrew"
+    enabled: true
+  git-delta:
+    source: "homebrew"
+    enabled: true
+  ripgrep:
+    source: "homebrew"
+    enabled: true
+  jq:
+    source: "homebrew"
+    enabled: true
+  fzf:
+    source: "homebrew"
+    enabled: true
+  k9s:
+    source: "homebrew"
+    enabled: true
+  sqlc:
+    source: "homebrew"
+    enabled: true
+  figlet:
+    source: "homebrew"
+    enabled: true
+  bat:
+    source: "homebrew"
+    enabled: true
+  ranger:
+    source: "homebrew"
+    enabled: true
+  curl:
+    source: "homebrew"
+    enabled: true
+  lazygit:
+    source: "homebrew"
+    enabled: true
+  tailscale:
+    source: "homebrew"
+    enabled: true
+  tmux:
+    source: "homebrew"
+    enabled: true
+  starship:
+    source: "homebrew"
+    enabled: true
+  tree:
+    source: "homebrew"
+    enabled: true
+  protobuf:
+    source: "homebrew"
+    enabled: true
+  awscli:
+    source: "homebrew"
+    enabled: true
+    
+  lua-language-server:
+    source: "homebrew"
+    enabled: true
+  typescript-language-server:
+    source: "homebrew"
+    enabled: true
+  pyright:
+    source: "homebrew"
+    enabled: true
+  gopls:
+    source: "homebrew"
+    enabled: true
+  rust-analyzer:
+    source: "homebrew"
     enabled: true
