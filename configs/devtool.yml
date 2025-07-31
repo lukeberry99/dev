@@ -98,15 +98,15 @@ tools:
     source: "homebrew"
     version_command: "k9s version | grep Version | awk '{print $2}'"
     enabled: true
-  # sqlc:
-  #   source: "homebrew"
-  #   enabled: true
-  # figlet:
-  #   source: "homebrew"
-  #   enabled: true
-  # bat:
-  #   source: "homebrew"
-  #   enabled: true
+  sqlc:
+    source: "homebrew"
+    enabled: true
+  figlet:
+    source: "homebrew"
+    enabled: true
+  bat:
+    source: "homebrew"
+    enabled: true
   ranger:
     source: "homebrew"
     enabled: true

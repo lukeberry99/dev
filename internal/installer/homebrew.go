@@ -25,13 +25,13 @@ func NewHomebrewManager(logger *ui.Logger, dryRun bool) *HomebrewManager {
 func (h *HomebrewManager) EnsureInstalled() error {
 	// Replicate exact Homebrew installation logic from bash
 	if h.isInstalled() {
-		h.logger.Info("Homebrew is already installed")
+		h.logger.Step("Homebrew is already installed")
 		return h.update()
 	}
 
-	h.logger.Info("Installing Homebrew...")
+	h.logger.Progress("Installing Homebrew...")
 	if h.dryRun {
-		h.logger.Info("[DRY RUN] Would install Homebrew")
+		h.logger.Step("[DRY RUN] Would install Homebrew")
 		return nil
 	}
 
@@ -94,17 +94,20 @@ func (h *HomebrewManager) InstallCask(caskName string) error {
 }
 
 func (h *HomebrewManager) InstallPackages(packages []string) error {
-	for _, pkg := range packages {
-		if h.isPackageInstalled(pkg) {
-			h.logger.Debug(fmt.Sprintf("Package %s already installed", pkg))
-			continue
-		}
+	h.logger.Progress(fmt.Sprintf("Installing packages: %v", packages))
 
-		h.logger.Info(fmt.Sprintf("Installing %s...", pkg))
+	if h.dryRun {
+		h.logger.Step(fmt.Sprintf("[DRY RUN] Would install packages: %v", packages))
+		return nil
+	}
+
+	for _, pkg := range packages {
+		h.logger.Step(fmt.Sprintf("Installing %s...", pkg))
 		if err := h.installPackage(pkg); err != nil {
 			return fmt.Errorf("failed to install %s: %w", pkg, err)
 		}
 	}
+
 	return nil
 }
 

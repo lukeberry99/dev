@@ -39,11 +39,11 @@ func NewToolRunner(logger *ui.Logger, dryRun, verbose, force bool, stateManager 
 }
 
 func (r *ToolRunner) InstallTool(name string, toolConfig config.ToolConfig) error {
-	r.logger.Info(fmt.Sprintf("Processing: %s", name))
+	r.logger.Section(fmt.Sprintf("Installing %s", name))
 
 	// Check if already installed and up-to-date
 	if r.isToolCurrent(name, toolConfig.InstalledBinary, toolConfig.Version, toolConfig) {
-		r.logger.Debug(fmt.Sprintf("Tool %s is already current", name))
+		r.logger.Success(fmt.Sprintf("%s is already up to date", name))
 		return nil
 	}
 
@@ -110,7 +110,6 @@ func (r *ToolRunner) detectActualVersion(name string, toolConfig config.ToolConf
 func (r *ToolRunner) validateToolExists(name string, config config.ToolConfig) bool {
 	return r.detector.IsInstalled(name, config)
 }
-
 func (r *ToolRunner) isToolCurrent(name, binary, expectedVersion string, config config.ToolConfig) bool {
 	if r.force {
 		r.logger.Debug(fmt.Sprintf("Force mode enabled - will reinstall %s", name))
@@ -156,28 +155,30 @@ func (r *ToolRunner) isToolCurrent(name, binary, expectedVersion string, config 
 }
 
 func (r *ToolRunner) installFromHomebrew(name string, toolConfig config.ToolConfig) error {
-	r.logger.Info(fmt.Sprintf("Installing %s via Homebrew", name))
-
 	if toolConfig.Cask {
-		r.logger.Info(fmt.Sprintf("Installing %s cask via Homebrew", name))
-		return r.homebrew.InstallCask(name)
-	}
-
-	// Install the package with any specified arguments
-	if len(toolConfig.HomebrewArgs) > 0 {
-		if err := r.homebrew.InstallPackageWithArgs(name, toolConfig.HomebrewArgs); err != nil {
+		r.logger.Progress(fmt.Sprintf("Installing %s app from Homebrew", name))
+		if err := r.homebrew.InstallCask(name); err != nil {
 			return err
 		}
 	} else {
-		if err := r.homebrew.InstallPackages([]string{name}); err != nil {
-			return err
+		r.logger.Progress(fmt.Sprintf("Installing %s from Homebrew", name))
+
+		// Install the package with any specified arguments
+		if len(toolConfig.HomebrewArgs) > 0 {
+			if err := r.homebrew.InstallPackageWithArgs(name, toolConfig.HomebrewArgs); err != nil {
+				return err
+			}
+		} else {
+			if err := r.homebrew.InstallPackages([]string{name}); err != nil {
+				return err
+			}
 		}
 	}
 
 	// Update state tracking
 	r.updateToolState(name, toolConfig, "homebrew")
 
-	r.logger.Info(fmt.Sprintf("✅ %s installed successfully via Homebrew", name))
+	r.logger.Success(fmt.Sprintf("%s installed successfully", name))
 	return nil
 }
 
@@ -307,30 +308,42 @@ func (r *ToolRunner) InstallTools(tools map[string]config.ToolConfig) error {
 		return nil
 	}
 
+	r.logger.Section(fmt.Sprintf("📦 Installing %d tools", len(enabledTools)))
+
 	// Ensure Homebrew once upfront if any tools need it
 	if needsHomebrew {
+		r.logger.Step("Setting up Homebrew...")
 		if err := r.homebrew.EnsureInstalled(); err != nil {
 			return fmt.Errorf("failed to ensure Homebrew is installed: %w", err)
 		}
 	}
 
-	r.logger.Info(fmt.Sprintf("Installing %d tools", len(enabledTools)))
-
 	// Install each tool
+	successCount := 0
 	for name, toolConfig := range enabledTools {
 		if err := r.InstallTool(name, toolConfig); err != nil {
-			return fmt.Errorf("failed to install %s: %w", name, err)
+			r.logger.Error(fmt.Sprintf("Failed to install %s: %v", name, err))
+			continue
 		}
+		successCount++
 	}
 
 	// Cleanup Homebrew if configured
 	if needsHomebrew {
+		r.logger.Step("Cleaning up Homebrew...")
 		if err := r.homebrew.Cleanup(); err != nil {
 			r.logger.Warn(fmt.Sprintf("Failed to cleanup Homebrew: %v", err))
 		}
 	}
 
-	r.logger.Info("✅ All tools installed successfully")
+	// Show summary
+	if successCount == len(enabledTools) {
+		r.logger.Success(fmt.Sprintf("All %d tools installed successfully", successCount))
+	} else {
+		failed := len(enabledTools) - successCount
+		r.logger.Warn(fmt.Sprintf("%d tools installed, %d failed", successCount, failed))
+	}
+
 	return nil
 }
 
