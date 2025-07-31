@@ -14,7 +14,7 @@ dotfiles:
   strategy: "copy"
   mappings:
     "env/.config": "~/.config"
-    "env/.local": "~/.local"
+    "env/.dev": "~/.dev"
     "env/.zshrc": "~/.zshrc"
     "env/.zprofile": "~/.zprofile"
     "env/.tmux-sessionizer": "~/.tmux-sessionizer"
@@ -37,7 +37,7 @@ tools:
 
   neovim:
     source: "build"
-    version: "v0.11.3"
+    version: "nightly"
     installed_binary: "nvim"
     version_command: "nvim --version | head -1 | awk '{print $2}'"
     build_config:
@@ -55,23 +55,28 @@ tools:
 
   ghostty:
     source: "homebrew"
-    homebrew_args: ["--cask"]
+    cask: true
+    app_name: "Ghostty"
     enabled: true
   syncthing:
     source: "homebrew"
-    homebrew_args: ["--cask"]
+    cask: true
+    app_name: "Ghostty"
     enabled: true
   obsidian:
     source: "homebrew"
-    homebrew_args: ["--cask"]
+    cask: true
+    app_name: "Obsidian"
     enabled: true
   raycast:
     source: "homebrew"
-    homebrew_args: ["--cask"]
+    cask: true
+    app_name: "Raycast"
     enabled: true
   cameracontroller:
     source: "homebrew"
-    homebrew_args: ["--cask"]
+    cask: true
+    app_name: "CameraController"
     enabled: true
 
   git:

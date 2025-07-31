@@ -1,8 +1,12 @@
 package state
 
 import (
+	"os"
 	"os/exec"
+	"path/filepath"
 	"strings"
+
+	"github.com/lukeberry99/devtool/internal/config"
 )
 
 type ToolDetector struct{}
@@ -11,8 +15,21 @@ func NewToolDetector() *ToolDetector {
 	return &ToolDetector{}
 }
 
-func (d *ToolDetector) IsInstalled(toolName string) bool {
+func (d *ToolDetector) IsInstalled(toolName string, config config.ToolConfig) bool {
+	if config.Cask {
+		appName := toolName
+		if config.AppName != "" {
+			appName = config.AppName
+		}
+		return d.IsApplicationInstalled(appName)
+	}
 	_, err := exec.LookPath(toolName)
+	return err == nil
+}
+
+func (d *ToolDetector) IsApplicationInstalled(appName string) bool {
+	appPath := filepath.Join("/Applications", appName+".app")
+	_, err := os.Stat(appPath)
 	return err == nil
 }
 

@@ -85,6 +85,14 @@ func (h *HomebrewManager) update() error {
 	return nil
 }
 
+func (h *HomebrewManager) InstallCask(caskName string) error {
+	if h.isCaskInstalled(caskName) {
+		h.logger.Debug(fmt.Sprintf("Cask %s already installed", caskName))
+		return nil
+	}
+	return h.installPackageWithArgs(caskName, []string{"--cask"})
+}
+
 func (h *HomebrewManager) InstallPackages(packages []string) error {
 	for _, pkg := range packages {
 		if h.isPackageInstalled(pkg) {
@@ -111,6 +119,11 @@ func (h *HomebrewManager) InstallPackageWithArgs(pkg string, args []string) erro
 		return fmt.Errorf("failed to install %s: %w", pkg, err)
 	}
 	return nil
+}
+
+func (h *HomebrewManager) isCaskInstalled(caskName string) bool {
+	cmd := exec.Command("brew", "list", "--cask", caskName)
+	return cmd.Run() == nil
 }
 
 func (h *HomebrewManager) isPackageInstalled(pkg string) bool {

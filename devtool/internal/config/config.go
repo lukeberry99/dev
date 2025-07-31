@@ -22,6 +22,8 @@ type ToolConfig struct {
 	Version         string       `yaml:"version"`
 	VersionCommand  string       `yaml:"version_command,omitempty"`
 	InstalledBinary string       `yaml:"installed_binary,omitempty"`
+	Cask            bool         `yaml:"cask,omitempty"`
+	AppName         string       `yaml:"app_name,omitempty"`
 	Source          string       `yaml:"source"` // "homebrew", "build", "script"
 	Dependencies    []string     `yaml:"dependencies"`
 	BuildConfig     *BuildConfig `yaml:"build_config,omitempty"`

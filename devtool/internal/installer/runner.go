@@ -42,7 +42,7 @@ func (r *ToolRunner) InstallTool(name string, toolConfig config.ToolConfig) erro
 	r.logger.Info(fmt.Sprintf("Processing: %s", name))
 
 	// Check if already installed and up-to-date
-	if r.isToolCurrent(name, toolConfig.InstalledBinary, toolConfig.Version) {
+	if r.isToolCurrent(name, toolConfig.InstalledBinary, toolConfig.Version, toolConfig) {
 		r.logger.Debug(fmt.Sprintf("Tool %s is already current", name))
 		return nil
 	}
@@ -107,11 +107,11 @@ func (r *ToolRunner) detectActualVersion(name string, toolConfig config.ToolConf
 	return toolConfig.Version
 }
 
-func (r *ToolRunner) validateToolExists(name string) bool {
-	return r.detector.IsInstalled(name)
+func (r *ToolRunner) validateToolExists(name string, config config.ToolConfig) bool {
+	return r.detector.IsInstalled(name, config)
 }
 
-func (r *ToolRunner) isToolCurrent(name, binary, expectedVersion string) bool {
+func (r *ToolRunner) isToolCurrent(name, binary, expectedVersion string, config config.ToolConfig) bool {
 	if r.force {
 		r.logger.Debug(fmt.Sprintf("Force mode enabled - will reinstall %s", name))
 		return false // --force flag bypasses all checks
@@ -127,16 +127,6 @@ func (r *ToolRunner) isToolCurrent(name, binary, expectedVersion string) bool {
 		return false
 	}
 
-	toolToCheck := name
-	if binary != "" {
-		toolToCheck = binary
-	}
-	// Validate tool actually exists on system
-	if !r.validateToolExists(toolToCheck) {
-		r.logger.Debug(fmt.Sprintf("Tool %s marked as installed but not found on system", name))
-		return false
-	}
-
 	// If config doesn't specify version, any installed version is OK
 	if expectedVersion == "" {
 		r.logger.Debug(fmt.Sprintf("Tool %s is current (no version requirement)", name))
@@ -149,12 +139,29 @@ func (r *ToolRunner) isToolCurrent(name, binary, expectedVersion string) bool {
 		return true
 	}
 
+	// This check is potentially expensive and unnecessary, we should instead just
+	// trust the state unless we are forcing an update.
+	// toolToCheck := name
+	// if binary != "" {
+	// 	toolToCheck = binary
+	// }
+	// // Validate tool actually exists on system
+	// if !r.validateToolExists(toolToCheck, config) {
+	// 	r.logger.Debug(fmt.Sprintf("Tool %s marked as installed but not found on system", name))
+	// 	return false
+	// }
+
 	r.logger.Debug(fmt.Sprintf("Tool %s version mismatch: have %s, want %s", name, status.Version, expectedVersion))
 	return false
 }
 
 func (r *ToolRunner) installFromHomebrew(name string, toolConfig config.ToolConfig) error {
 	r.logger.Info(fmt.Sprintf("Installing %s via Homebrew", name))
+
+	if toolConfig.Cask {
+		r.logger.Info(fmt.Sprintf("Installing %s cask via Homebrew", name))
+		return r.homebrew.InstallCask(name)
+	}
 
 	// Install the package with any specified arguments
 	if len(toolConfig.HomebrewArgs) > 0 {
