@@ -5,10 +5,10 @@ local M = {}
 M.on_attach = function(client, bufnr)
 	local opts = { noremap = true, silent = true, buffer = bufnr }
 
-	key("<leader>fd", "Lspsaga finder", "n", opts) -- go to definition
-	key("<leader>gd", "Lspsaga peek_definition", "n", opts) -- peak definition
-	key("<leader>gD", "Lspsaga goto_definition", "n", opts) -- go to definition
-	key("<leader>gS", "vsplit | Lspsaga goto_definition", "n", opts) -- go to definition
+	key("fd", "Lspsaga finder", "n", opts) -- go to definition
+	key("gd", "Lspsaga peek_definition", "n", opts) -- peak definition
+	key("gD", "Lspsaga goto_definition", "n", opts) -- go to definition
+	key("gS", "vsplit | Lspsaga goto_definition", "n", opts) -- go to definition
 	key("<leader>ca", "Lspsaga code_action", "n", opts) -- see available code actions
 	key("<leader>rn", "Lspsaga rename", "n", opts) -- smart rename
 	key("E", "Lspsaga show_line_diagnostics", "n", opts) -- show  diagnostics for line
