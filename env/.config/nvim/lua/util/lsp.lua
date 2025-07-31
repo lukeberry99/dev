@@ -19,6 +19,16 @@ M.on_attach = function(client, bufnr)
 
 	key("K", "Lspsaga hover_doc", "n", opts) -- show documentation for what is under cursor
 
+	-- Auto-format on save for Go files
+	if vim.bo[bufnr].filetype == "go" then
+		vim.api.nvim_create_autocmd("BufWritePre", {
+			buffer = bufnr,
+			callback = function()
+				vim.lsp.buf.format({ async = false })
+			end,
+		})
+	end
+
 	if client.name == "pyright" then
 		key("<leader>oi", "PyrightOrganizeImports", "n", opts) -- organise imports
 		key("<leader>db", "DapToggleBreakpoint", "n", opts) -- toggle breakpoint
