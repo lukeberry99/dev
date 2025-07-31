@@ -36,9 +36,10 @@ type BuildConfig struct {
 }
 
 type DotfilesConfig struct {
-	BackupDir string            `yaml:"backup_dir"`
-	Strategy  string            `yaml:"strategy"` // "copy", "symlink"
-	Mappings  map[string]string `yaml:"mappings"`
+	SourceRoot string            `yaml:"source_root"`
+	BackupDir  string            `yaml:"backup_dir"`
+	Strategy   string            `yaml:"strategy"` // "copy", "symlink"
+	Mappings   map[string]string `yaml:"mappings"`
 }
 
 type HomebrewConfig struct {

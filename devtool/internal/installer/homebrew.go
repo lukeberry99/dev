@@ -172,16 +172,21 @@ func (h *HomebrewManager) GetInstalledVersion(pkg string) (string, error) {
 		return "dry-run-version", nil
 	}
 
-	// Try to get version from brew info
-	cmd := exec.Command("brew", "info", pkg, "--json")
-	_, err := cmd.Output()
+	// Use brew list --versions to get installed version
+	cmd := exec.Command("brew", "list", "--versions", pkg)
+	output, err := cmd.Output()
 	if err != nil {
-		return "", fmt.Errorf("failed to get info for %s: %w", pkg, err)
+		return "", fmt.Errorf("failed to get version for %s: %w", pkg, err)
 	}
 
-	// For now, just return that it's installed
-	// TODO: Parse JSON to get actual version
-	return "installed", nil
+	// Parse output like "k9s 0.50.9" to extract version
+	outputStr := strings.TrimSpace(string(output))
+	parts := strings.Fields(outputStr)
+	if len(parts) >= 2 {
+		return parts[1], nil // Return the version part
+	}
+
+	return "", fmt.Errorf("unexpected brew list output format: %s", outputStr)
 }
 
 func (h *HomebrewManager) Cleanup() error {

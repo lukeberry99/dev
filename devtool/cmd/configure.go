@@ -1,10 +1,12 @@
 package cmd
 
 import (
-	"fmt"
-
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+
+	"github.com/lukeberry99/devtool/internal/config"
+	"github.com/lukeberry99/devtool/internal/configurator"
+	"github.com/lukeberry99/devtool/internal/ui"
 )
 
 var configureCmd = &cobra.Command{
@@ -18,19 +20,40 @@ This includes .config directories, .local scripts, and dotfiles.`,
 }
 
 func runConfigure(cmd *cobra.Command, args []string) {
-	fmt.Println("Configure command called")
+	dryRun := viper.GetBool("dry-run")
+	verbose := viper.GetBool("verbose")
 
-	if viper.GetBool("dry-run") {
-		fmt.Println("DRY RUN: Would deploy configuration files")
+	// Initialize logger
+	logger := ui.NewLogger(verbose)
+
+	logger.Info("Starting configuration deployment...")
+
+	if dryRun {
+		logger.Info("DRY RUN MODE: No actual file operations will be performed")
+	}
+
+	// Load configuration
+	configFile := viper.GetString("config")
+	cfg, err := config.Load(configFile)
+	if err != nil {
+		logger.Errorf("Failed to load configuration: %v", err)
 		return
 	}
 
-	if viper.GetBool("verbose") {
-		fmt.Println("Verbose mode enabled")
+	// Initialize dotfiles manager
+	dotfilesManager, err := configurator.NewDotfilesManager(cfg, logger, dryRun)
+	if err != nil {
+		logger.Errorf("Failed to initialize dotfiles manager: %v", err)
+		return
 	}
 
-	// TODO: Implement actual configuration deployment logic
-	fmt.Println("Configuration deployment logic not yet implemented")
+	// Deploy configuration files
+	if err := dotfilesManager.Deploy(); err != nil {
+		logger.Errorf("Configuration deployment failed: %v", err)
+		return
+	}
+
+	logger.Info("✅ Configuration deployment completed successfully")
 }
 
 func init() {

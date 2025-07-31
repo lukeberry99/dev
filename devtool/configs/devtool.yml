@@ -9,6 +9,7 @@ logging:
   format: "console"
 
 dotfiles:
+  source_root: "/Users/luke/repos/github.com/lukeberry99/dev"
   backup_dir: "~/.devtool/backups"
   strategy: "copy"
   mappings:
@@ -33,10 +34,10 @@ tools:
   golangci-lint:
     source: "homebrew"
     enabled: true
-    
+
   neovim:
     source: "build"
-    version: "nightly"
+    version: "v11.3"
     build_config:
       repository: "https://github.com/neovim/neovim.git"
       dependencies: ["cmake", "gettext", "lua"]
@@ -45,11 +46,11 @@ tools:
       install_steps:
         - "sudo make install"
     enabled: true
-    
+
   fnm:
     source: "homebrew"
     enabled: true
-    
+
   ghostty:
     source: "homebrew"
     homebrew_args: ["--cask"]
@@ -70,7 +71,7 @@ tools:
     source: "homebrew"
     homebrew_args: ["--cask"]
     enabled: true
-    
+
   git:
     source: "homebrew"
     enabled: true
@@ -125,7 +126,7 @@ tools:
   awscli:
     source: "homebrew"
     enabled: true
-    
+
   lua-language-server:
     source: "homebrew"
     enabled: true
