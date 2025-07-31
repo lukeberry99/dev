@@ -17,18 +17,20 @@ type ToolRunner struct {
 	logger       *ui.Logger
 	dryRun       bool
 	verbose      bool
+	force        bool
 	homebrew     *HomebrewManager
 	stateManager *state.LocalStateManager
 	detector     *state.ToolDetector
 }
 
-func NewToolRunner(logger *ui.Logger, dryRun, verbose bool, stateManager *state.LocalStateManager) *ToolRunner {
+func NewToolRunner(logger *ui.Logger, dryRun, verbose, force bool, stateManager *state.LocalStateManager) *ToolRunner {
 	homebrew := NewHomebrewManager(logger, dryRun)
 
 	return &ToolRunner{
 		logger:       logger,
 		dryRun:       dryRun,
 		verbose:      verbose,
+		force:        force,
 		homebrew:     homebrew,
 		stateManager: stateManager,
 		detector:     state.NewToolDetector(),
@@ -56,12 +58,46 @@ func (r *ToolRunner) InstallTool(name string, toolConfig config.ToolConfig) erro
 	}
 }
 
+func (r *ToolRunner) validateToolExists(name string) bool {
+	return r.detector.IsInstalled(name)
+}
+
 func (r *ToolRunner) isToolCurrent(name, expectedVersion string) bool {
+	if r.force {
+		r.logger.Debug(fmt.Sprintf("Force mode enabled - will reinstall %s", name))
+		return false // --force flag bypasses all checks
+	}
+
 	if r.stateManager == nil {
 		return false
 	}
 
-	return r.stateManager.IsToolCurrent(name, expectedVersion)
+	status, exists := r.stateManager.GetToolStatus(name)
+	if !exists || !status.Installed {
+		r.logger.Debug(fmt.Sprintf("Tool %s not found in state or marked as not installed", name))
+		return false
+	}
+
+	// Validate tool actually exists on system
+	if !r.validateToolExists(name) {
+		r.logger.Debug(fmt.Sprintf("Tool %s marked as installed but not found on system", name))
+		return false
+	}
+
+	// If config doesn't specify version, any installed version is OK
+	if expectedVersion == "" {
+		r.logger.Debug(fmt.Sprintf("Tool %s is current (no version requirement)", name))
+		return true
+	}
+
+	// Strict version matching when config specifies version
+	if status.Version == expectedVersion {
+		r.logger.Debug(fmt.Sprintf("Tool %s is current (version %s matches)", name, expectedVersion))
+		return true
+	}
+
+	r.logger.Debug(fmt.Sprintf("Tool %s version mismatch: have %s, want %s", name, status.Version, expectedVersion))
+	return false
 }
 
 func (r *ToolRunner) installFromHomebrew(name string, toolConfig config.ToolConfig) error {

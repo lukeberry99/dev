@@ -24,6 +24,7 @@ Optionally filter which tools to install with a pattern.`,
 func runInstall(cmd *cobra.Command, args []string) {
 	dryRun := viper.GetBool("dry-run")
 	verbose := viper.GetBool("verbose")
+	force, _ := cmd.Flags().GetBool("force")
 
 	// Initialize logger
 	logger := ui.NewLogger(verbose)
@@ -32,6 +33,10 @@ func runInstall(cmd *cobra.Command, args []string) {
 
 	if dryRun {
 		logger.Info("DRY RUN MODE: No actual installations will be performed")
+	}
+
+	if force {
+		logger.Info("FORCE MODE: Will reinstall tools even if they appear current")
 	}
 
 	// Initialize state manager
@@ -54,7 +59,7 @@ func runInstall(cmd *cobra.Command, args []string) {
 	}
 
 	// Initialize tool runner
-	runner := installer.NewToolRunner(logger, dryRun, verbose, stateManager)
+	runner := installer.NewToolRunner(logger, dryRun, verbose, force, stateManager)
 
 	// Install tools
 	if err := runner.InstallTools(cfg.Tools); err != nil {
@@ -94,4 +99,5 @@ func init() {
 	rootCmd.AddCommand(installCmd)
 	installCmd.Flags().StringSlice("tools", []string{}, "Specific tools to install")
 	installCmd.Flags().String("profile", "", "Install tools for specific profile")
+	installCmd.Flags().Bool("force", false, "Force reinstall even if tools appear current")
 }
