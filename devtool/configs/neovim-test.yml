@@ -5,7 +5,6 @@ tools:
     version: "nightly"
     build_config:
       repository: "https://github.com/neovim/neovim.git"
-      branch: "master"
       dependencies: ["cmake", "gettext", "lua"]
       build_steps:
         - "make CMAKE_BUILD_TYPE=RelWithDebInfo"
