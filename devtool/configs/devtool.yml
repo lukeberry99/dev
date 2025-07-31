@@ -1,0 +1,14 @@
+version: "1.0"
+tools:
+  neovim:
+    source: "build"
+    version: "nightly"
+    build_config:
+      repository: "https://github.com/neovim/neovim.git"
+      branch: "master"
+      dependencies: ["cmake", "gettext", "lua"]
+      build_steps:
+        - "make CMAKE_BUILD_TYPE=RelWithDebInfo"
+      install_steps:
+        - "sudo make install"
+    enabled: true

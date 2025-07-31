@@ -11,10 +11,7 @@ import (
 var rootCmd = &cobra.Command{
 	Use:   "devtool",
 	Short: "Development environment setup and management",
-	Long: `An over-the-top dotfiles/mac configuration setup tool.
-	
-This tool replaces manual bash scripts with intelligent Go-based
-environment management across multiple machines.`,
+	Long:  `An over-the-top dotfiles/mac configuration setup tool.`,
 }
 
 func Execute() {

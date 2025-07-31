@@ -1,10 +1,13 @@
 package cmd
 
 import (
-	"fmt"
-
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+
+	"github.com/lukeberry99/devtool/internal/config"
+	"github.com/lukeberry99/devtool/internal/installer"
+	"github.com/lukeberry99/devtool/internal/state"
+	"github.com/lukeberry99/devtool/internal/ui"
 )
 
 var installCmd = &cobra.Command{
@@ -19,19 +22,72 @@ Optionally filter which tools to install with a pattern.`,
 }
 
 func runInstall(cmd *cobra.Command, args []string) {
-	fmt.Println("Install command called")
+	dryRun := viper.GetBool("dry-run")
+	verbose := viper.GetBool("verbose")
 
-	if viper.GetBool("dry-run") {
-		fmt.Println("DRY RUN: Would install tools")
+	// Initialize logger
+	logger := ui.NewLogger(verbose)
+
+	logger.Info("Starting tool installation...")
+
+	if dryRun {
+		logger.Info("DRY RUN MODE: No actual installations will be performed")
+	}
+
+	// Initialize state manager
+	stateManager, err := state.NewLocalStateManager()
+	if err != nil {
+		logger.Errorf("Failed to initialize state manager: %v", err)
 		return
 	}
 
-	if viper.GetBool("verbose") {
-		fmt.Println("Verbose mode enabled")
+	// Load configuration
+	configFile := viper.GetString("config")
+	cfg, err := config.Load(configFile)
+	if err != nil {
+		logger.Errorf("Failed to load configuration: %v", err)
+		// Create a minimal default config for basic functionality
+		cfg = &config.Config{
+			Tools: getDefaultTools(),
+		}
+		logger.Info("Using default tool configuration")
 	}
 
-	// TODO: Implement actual installation logic
-	fmt.Println("Installation logic not yet implemented")
+	// Initialize tool runner
+	runner := installer.NewToolRunner(logger, dryRun, verbose, stateManager)
+
+	// Install tools
+	if err := runner.InstallTools(cfg.Tools); err != nil {
+		logger.Errorf("Installation failed: %v", err)
+		return
+	}
+
+	logger.Info("✅ Installation completed successfully")
+}
+
+func getDefaultTools() map[string]config.ToolConfig {
+	return map[string]config.ToolConfig{
+		"git": {
+			Source:  "homebrew",
+			Enabled: true,
+		},
+		"tmux": {
+			Source:  "homebrew",
+			Enabled: true,
+		},
+		"ripgrep": {
+			Source:  "homebrew",
+			Enabled: true,
+		},
+		"fzf": {
+			Source:  "homebrew",
+			Enabled: true,
+		},
+		"jq": {
+			Source:  "homebrew",
+			Enabled: true,
+		},
+	}
 }
 
 func init() {
