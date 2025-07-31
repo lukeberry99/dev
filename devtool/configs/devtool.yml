@@ -38,6 +38,8 @@ tools:
   neovim:
     source: "build"
     version: "v0.11.3"
+    installed_binary: "nvim"
+    version_command: "nvim --version | head -1 | awk '{print $2}'"
     build_config:
       repository: "https://github.com/neovim/neovim.git"
       dependencies: ["cmake", "gettext", "lua"]
@@ -89,16 +91,17 @@ tools:
     enabled: true
   k9s:
     source: "homebrew"
+    version_command: "k9s version | grep Version | awk '{print $2}'"
     enabled: true
-  sqlc:
-    source: "homebrew"
-    enabled: true
-  figlet:
-    source: "homebrew"
-    enabled: true
-  bat:
-    source: "homebrew"
-    enabled: true
+  # sqlc:
+  #   source: "homebrew"
+  #   enabled: true
+  # figlet:
+  #   source: "homebrew"
+  #   enabled: true
+  # bat:
+  #   source: "homebrew"
+  #   enabled: true
   ranger:
     source: "homebrew"
     enabled: true

@@ -19,13 +19,15 @@ type Config struct {
 }
 
 type ToolConfig struct {
-	Version      string       `yaml:"version"`
-	Source       string       `yaml:"source"` // "homebrew", "build", "script"
-	Dependencies []string     `yaml:"dependencies"`
-	BuildConfig  *BuildConfig `yaml:"build_config,omitempty"`
-	HomebrewArgs []string     `yaml:"homebrew_args,omitempty"`
-	Profile      []string     `yaml:"profile"`
-	Enabled      bool         `yaml:"enabled"`
+	Version         string       `yaml:"version"`
+	VersionCommand  string       `yaml:"version_command,omitempty"`
+	InstalledBinary string       `yaml:"installed_binary,omitempty"`
+	Source          string       `yaml:"source"` // "homebrew", "build", "script"
+	Dependencies    []string     `yaml:"dependencies"`
+	BuildConfig     *BuildConfig `yaml:"build_config,omitempty"`
+	HomebrewArgs    []string     `yaml:"homebrew_args,omitempty"`
+	Profile         []string     `yaml:"profile"`
+	Enabled         bool         `yaml:"enabled"`
 }
 
 type BuildConfig struct {

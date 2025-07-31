@@ -5,6 +5,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strings"
 	"time"
 
 	"github.com/lukeberry99/devtool/internal/config"
@@ -41,7 +42,7 @@ func (r *ToolRunner) InstallTool(name string, toolConfig config.ToolConfig) erro
 	r.logger.Info(fmt.Sprintf("Processing: %s", name))
 
 	// Check if already installed and up-to-date
-	if r.isToolCurrent(name, toolConfig.Version) {
+	if r.isToolCurrent(name, toolConfig.InstalledBinary, toolConfig.Version) {
 		r.logger.Debug(fmt.Sprintf("Tool %s is already current", name))
 		return nil
 	}
@@ -58,11 +59,59 @@ func (r *ToolRunner) InstallTool(name string, toolConfig config.ToolConfig) erro
 	}
 }
 
+func (r *ToolRunner) runVersionCommand(toolName, command string) string {
+	if r.dryRun {
+		r.logger.Debug(fmt.Sprintf("[DRY RUN] Would run version command for %s: %s", toolName, command))
+		return "dry-run-version"
+	}
+
+	cmd := exec.Command("sh", "-c", command)
+	output, err := cmd.Output()
+	if err != nil {
+		r.logger.Debug(fmt.Sprintf("Version command failed for %s: %v", toolName, err))
+		return ""
+	}
+
+	return strings.TrimSpace(string(output))
+}
+
+func (r *ToolRunner) detectActualVersion(name string, toolConfig config.ToolConfig, source string) string {
+	// 1. Try custom version command first
+	if toolConfig.VersionCommand != "" {
+		if version := r.runVersionCommand(name, toolConfig.VersionCommand); version != "" {
+			r.logger.Debug(fmt.Sprintf("Detected %s version via custom command: %s", name, version))
+			return version
+		}
+	}
+
+	// 2. Fall back to source-specific detection
+	switch source {
+	case "homebrew":
+		if version, err := r.homebrew.GetInstalledVersion(name); err == nil {
+			r.logger.Debug(fmt.Sprintf("Detected %s version via Homebrew: %s", name, version))
+			return version
+		} else {
+			r.logger.Debug(fmt.Sprintf("Could not detect %s version via Homebrew: %v", name, err))
+		}
+	case "build", "script":
+		if version, err := r.detector.GetVersion(name); err == nil {
+			r.logger.Debug(fmt.Sprintf("Detected %s version via tool detection: %s", name, version))
+			return version
+		} else {
+			r.logger.Debug(fmt.Sprintf("Could not detect %s version via tool detection: %v", name, err))
+		}
+	}
+
+	// 3. Last resort: config version
+	r.logger.Debug(fmt.Sprintf("Using config version for %s: %s", name, toolConfig.Version))
+	return toolConfig.Version
+}
+
 func (r *ToolRunner) validateToolExists(name string) bool {
 	return r.detector.IsInstalled(name)
 }
 
-func (r *ToolRunner) isToolCurrent(name, expectedVersion string) bool {
+func (r *ToolRunner) isToolCurrent(name, binary, expectedVersion string) bool {
 	if r.force {
 		r.logger.Debug(fmt.Sprintf("Force mode enabled - will reinstall %s", name))
 		return false // --force flag bypasses all checks
@@ -78,8 +127,12 @@ func (r *ToolRunner) isToolCurrent(name, expectedVersion string) bool {
 		return false
 	}
 
+	toolToCheck := name
+	if binary != "" {
+		toolToCheck = binary
+	}
 	// Validate tool actually exists on system
-	if !r.validateToolExists(name) {
+	if !r.validateToolExists(toolToCheck) {
 		r.logger.Debug(fmt.Sprintf("Tool %s marked as installed but not found on system", name))
 		return false
 	}
@@ -190,25 +243,8 @@ func (r *ToolRunner) updateToolState(name string, toolConfig config.ToolConfig, 
 
 	now := time.Now()
 
-	// Detect actual installed version
-	actualVersion := toolConfig.Version // Default to config version
-	if source == "homebrew" {
-		// Use Homebrew to get version for Homebrew-installed tools
-		if brewVersion, err := r.homebrew.GetInstalledVersion(name); err == nil {
-			actualVersion = brewVersion
-			r.logger.Debug(fmt.Sprintf("Detected %s version via Homebrew: %s", name, actualVersion))
-		} else {
-			r.logger.Debug(fmt.Sprintf("Could not detect %s version via Homebrew: %v", name, err))
-		}
-	} else {
-		// Fall back to tool-specific detection for non-Homebrew tools
-		if detectedVersion, err := r.detector.GetVersion(name); err == nil {
-			actualVersion = detectedVersion
-			r.logger.Debug(fmt.Sprintf("Detected %s version: %s", name, actualVersion))
-		} else {
-			r.logger.Debug(fmt.Sprintf("Could not detect %s version: %v", name, err))
-		}
-	}
+	// Detect actual installed version using new enhanced detection
+	actualVersion := r.detectActualVersion(name, toolConfig, source)
 
 	// Detect binary path
 	binaryPath := ""
@@ -234,6 +270,7 @@ func (r *ToolRunner) updateToolState(name string, toolConfig config.ToolConfig, 
 		r.logger.Warn(fmt.Sprintf("Failed to save state: %v", err))
 	}
 }
+
 func (r *ToolRunner) InstallDependencies(dependencies []string) error {
 	if len(dependencies) == 0 {
 		return nil
