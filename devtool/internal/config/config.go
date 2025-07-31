@@ -30,7 +30,6 @@ type ToolConfig struct {
 
 type BuildConfig struct {
 	Repository   string   `yaml:"repository"`
-	Branch       string   `yaml:"branch"`
 	BuildSteps   []string `yaml:"build_steps"`
 	InstallSteps []string `yaml:"install_steps"`
 	Dependencies []string `yaml:"dependencies"`
