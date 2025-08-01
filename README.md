@@ -38,6 +38,7 @@ tools:
     
   neovim:
     source: "build"
+    version: "nightly"
     build_config:
       repository: "https://github.com/neovim/neovim.git"
       build_steps:
@@ -49,6 +50,8 @@ dotfiles:
     "env/.config": "~/.config"
     "env/.zshrc": "~/.zshrc"
 ```
+
+For a more in-depth config, look at [devtool.yml](https://github.com/lukeberry99/dev/blob/main/configs/devtool.yml)
 
 ## Options
 
