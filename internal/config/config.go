@@ -101,21 +101,21 @@ func Load(configPath string) (*Config, error) {
 }
 
 func getDefaultConfigPath() string {
-	if repoRoot := findRepoRoot(); repoRoot != "" {
-		return filepath.Join(repoRoot, "devtool", "configs", "devtool.yml")
-	}
+	// if repoRoot := findRepoRoot(); repoRoot != "" {
+	// 	return filepath.Join(repoRoot, "devtool", "configs", "devtool.yml")
+	// }
 
 	homeDir, _ := os.UserHomeDir()
-	return filepath.Join(homeDir, ".devtool.yaml")
+	return filepath.Join(homeDir, ".config", "devtool", "devtool.yaml")
 }
 
-func findRepoRoot() string {
-	dir, _ := os.Getwd()
-	for dir != "/" {
-		if _, err := os.Stat(filepath.Join(dir, ".git")); err == nil {
-			return dir
-		}
-		dir = filepath.Dir(dir)
-	}
-	return ""
-}
+// func findRepoRoot() string {
+// 	dir, _ := os.Getwd()
+// 	for dir != "/" {
+// 		if _, err := os.Stat(filepath.Join(dir, ".git")); err == nil {
+// 			return dir
+// 		}
+// 		dir = filepath.Dir(dir)
+// 	}
+// 	return ""
+// }

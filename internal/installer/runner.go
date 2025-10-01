@@ -110,6 +110,7 @@ func (r *ToolRunner) detectActualVersion(name string, toolConfig config.ToolConf
 func (r *ToolRunner) validateToolExists(name string, config config.ToolConfig) bool {
 	return r.detector.IsInstalled(name, config)
 }
+
 func (r *ToolRunner) isToolCurrent(name, binary, expectedVersion string, config config.ToolConfig) bool {
 	if r.force {
 		r.logger.Debug(fmt.Sprintf("Force mode enabled - will reinstall %s", name))
@@ -128,8 +129,8 @@ func (r *ToolRunner) isToolCurrent(name, binary, expectedVersion string, config 
 
 	// If config doesn't specify version, any installed version is OK
 	if expectedVersion == "" {
-		r.logger.Debug(fmt.Sprintf("Tool %s is current (no version requirement)", name))
-		return true
+		r.logger.Debug(fmt.Sprintf("Tool %s will be updated to latest (no version requirement)", name))
+		return false
 	}
 
 	// Strict version matching when config specifies version
